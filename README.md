@@ -1,6 +1,11 @@
 # desafio-aws-vpc-ec2-web-server-run-as-cloud
 Aprenda a criar uma Virtual Private Cloud (VPC) personalizada, configurar sub-redes e executar um servidor web simples (Apache) em uma instância EC2, tudo dentro do Free Tier da AWS.  Este é um laboratório prático do Grupo de Estudos Run as Cloud.
 
+## 🌐 O que é uma VPC?
+A Amazon VPC (Virtual Private Cloud) permite provisionar uma rede virtual isolada dentro da nuvem da AWS, onde você pode definir seus próprios intervalos de IP, criar sub-redes, configurar tabelas de rotas e gateways de internet. É como ter seu próprio data center na nuvem — mas com toda a flexibilidade e escalabilidade da AWS.
+
+Dentro de uma VPC, você pode controlar como suas instâncias EC2 se comunicam entre si, com outros serviços da AWS e com a internet. Você também define regras de segurança personalizadas, tornando sua infraestrutura mais segura e sob controle total.
+
 ---
 
 ## ⚠️ **Atenção antes de começar**
@@ -71,7 +76,8 @@ Tela com os dados preenchidos para criação da VPC (10.0.0.0/16).
 
 Resumo da VPC criada com nome lab-vpc.
 
-![image (55) (1)](https://github.com/user-attachments/assets/d4bfbc35-4518-47e1-a18f-cb7dea8b4686)
+![image (72)](https://github.com/user-attachments/assets/2f6ac27f-e0d7-4005-8948-fd2d72998d68)
+
 
 ---
 ## 🟨 Etapa 2 – Criar Sub-rede Pública
@@ -92,12 +98,14 @@ Clique em Criar sub-rede.
 📸 
 Tela de criação da sub-rede com os dados acima.
 
-![image (56)](https://github.com/user-attachments/assets/7fdc7442-7b02-42f7-9f66-068192ba82a7)
+![image (73)](https://github.com/user-attachments/assets/a72701ad-f475-4ad2-9d3e-196727621291)
+
 
 
 Sub-rede criada listada no console.
 
-![image (57)](https://github.com/user-attachments/assets/619d19f5-c4d7-46da-b1af-e4a63de48bdb)
+![image (74)](https://github.com/user-attachments/assets/65e53ac4-e947-43fd-80bd-e03e7d8e5949)
+
 
 ## 🟧 Etapa 3 – Criar e Associar o Internet Gateway
 Passos:
@@ -113,12 +121,13 @@ Após criado, selecione o IGW > Ações > Associar à VPC > selecione `lab-vpc`
 📸
 Tela de criação do IGW com nome lab-igw.
 
-![image (58)](https://github.com/user-attachments/assets/67a73585-4354-4c96-b1c2-0a83397de4ee)
+![image (75)](https://github.com/user-attachments/assets/6c5de181-d0b8-4696-bf0d-26da26e07679)
+
 
 
 Tela de associação do IGW à VPC lab-vpc.
 
-![image (59)](https://github.com/user-attachments/assets/f4e34a95-5584-4f58-a166-01e1ce294b54)
+![image (76)](https://github.com/user-attachments/assets/1975e70d-a844-47ed-b60e-2da96605e402)
 
 ---
 
@@ -146,16 +155,18 @@ Vá em Sub-redes associadas > Editar associações > selecione `lab-subnet-publi
 📸 
 Criação da tabela com nome lab-public-rt.
 
-![image (60)](https://github.com/user-attachments/assets/c1ed9842-0bef-4b4a-af17-976b864ba0cf)
+![image (77)](https://github.com/user-attachments/assets/2c1b64c3-c66b-4cc5-8e62-c22a9d059295)
+
 
 
 Adição da rota 0.0.0.0/0 com destino ao IGW.
 
-![image (61)](https://github.com/user-attachments/assets/45e10811-b0e7-4bfa-8fe2-ff8b37dade45)
+![image (78)](https://github.com/user-attachments/assets/d2deda26-4cfe-4c99-b2b3-68d409f085c9)
+
 
 Associação da sub-rede pública.
 
-![image (62)](https://github.com/user-attachments/assets/715f0ff5-d0a7-4d2a-a831-41e164dcbec9)
+![image (79)](https://github.com/user-attachments/assets/b9000f6c-f0ba-44a0-9eee-a6e2b5c4199e)
 
 ---
 
@@ -181,7 +192,8 @@ Clique em Criar grupo de segurança.
 📸 
 Tela de criação do grupo com nome e regra HTTP porta 80.
 
-![image (64)](https://github.com/user-attachments/assets/5e3af001-2c37-4ed5-8c78-462f100ac05f)
+![image (80)](https://github.com/user-attachments/assets/57c2d511-8a52-4b92-ac59-ef1a6ef134a9)
+
 
 
 Esse grupo permitirá que qualquer usuário na internet acesse a porta 80 (web) da sua instância EC2, o que é exatamente o que você quer para um servidor Apache simples nesse laboratório.
@@ -199,6 +211,8 @@ Preencha:
 
  - Tipo: `t2.micro`
 
+ - Selecione a VPC: `lab-vpc`
+
  - Sub-rede: `lab-subnet-public`
 
  - Atribuir IP público: ✅ Habilitado
@@ -209,23 +223,31 @@ Role até "Dados do usuário" e insira o script:
 
 ```
 #!/bin/bash
-dnf update -y
-dnf install -y httpd
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
 systemctl start httpd
 systemctl enable httpd
-echo "Servidor Web Run as Cloud" > /var/www/html/index.html
+echo "<h1>Welcome to Web Server Run as Cloud from $(hostname -f)</h1>" > /var/www/html/index.html
+
 ```
 Clique em Executar instância.
 
 📸 
 Tela de configuração com os dados da instância.
 
-![image (65)](https://github.com/user-attachments/assets/2a4b89db-f6c4-40b0-ae12-aa402bdec161)
+![image (81)](https://github.com/user-attachments/assets/828797f4-ea33-4a88-b095-615314abdc53)
+
+Network settings 
+
+![image (83)](https://github.com/user-attachments/assets/74d30e72-1760-4951-869d-67d0cb3691c9)
+
 
 
 Campo “Dados do usuário” com o script preenchido.
 
-![image (67)](https://github.com/user-attachments/assets/7546987d-d559-459b-b725-482b1166aab8)
+![image (84)](https://github.com/user-attachments/assets/5dc3f7e0-8b23-430d-82f0-46afffb9bf41)
 
 Para esta atividade, como o foco é lançar uma instância EC2 que execute um servidor web acessível via HTTP (porta 80) e não exige conexão SSH para fins de teste, você pode escolher a opção:
 
@@ -235,7 +257,7 @@ Para esta atividade, como o foco é lançar uma instância EC2 que execute um se
 
 ---
 
-🌐 Etapa 7 – Verificar Web Server
+## 🌐 Etapa 7 – Verificar Web Server
 Passos:
 Vá até a instância EC2 e aguarde até o status: 2/2 checks passed.
 
@@ -248,13 +270,92 @@ EC2 com status "2/2 checks passed".
 
 IP público copiado.
 
-![image (69)](https://github.com/user-attachments/assets/72a6b20f-92f6-4e6b-be2a-70027b1f77b0)
+![image (85)](https://github.com/user-attachments/assets/7fc6a25d-0be8-431e-8c87-d34a82bee76b)
+
 
 Página no navegador exibindo “Servidor Web Run as Cloud”.
+
+![image (86)](https://github.com/user-attachments/assets/836027b3-4e2c-48fc-b03b-538d5b8e4d84)
+
+
 
 ❗ Se a página não abrir:
 
 - Verifique se a instância está em execução e com o status "2/2 checks passed"
 - Confirme que o grupo de segurança está permitindo tráfego na porta 80
 - Tente acessar usando `http://<IP_PÚBLICO>` (sem "https://")
+
+---
+## 📸 Registrar Evidências 
+
+### VPC criada com sucesso
+
+### Sub-rede pública criada
+
+### Internet Gateway associado
+
+### Tabela de rotas com acesso à internet
+
+### Security Group configurado
+
+### Instância EC2 lançada
+
+### Página web acessada com sucesso
+
+---
+## ✅ Conclusão
+### Neste laboratório do desafio AWS VPC + EC2 + Web Server Run as Cloud, você construiu uma infraestrutura de rede personalizada e lançou uma aplicação web simples em instância EC2, utilizando apenas recursos elegíveis ao Free Tier da AWS.
+
+### Ao final da atividade, você foi capaz de:
+ - Criar uma VPC personalizada com bloco CIDR 10.0.0.0/16
+
+ - Configurar uma sub-rede pública com acesso à internet
+
+ - Associar um Internet Gateway e criar uma tabela de rotas
+
+ - Criar e aplicar um Security Group com permissão HTTP (porta 80)
+
+ - Lançar uma instância EC2 t2.micro com Apache Web Server
+
+ - Validar o funcionamento do servidor acessando uma página de boas-vindas no navegador
+
+🚀 Com isso, você deu um passo importante na prática com redes e instâncias na AWS, entendendo os componentes fundamentais da arquitetura em nuvem.
+
+ ## Esse é o tipo de conhecimento essencial para quem deseja evoluir no caminho de certificações como:
+
+##  AWS Cloud Practitioner
+
+##   AWS Solutions Architect – Associate
+---
+## 👍 Parabéns! Você concluiu com sucesso o Laboratório desafio aws vpc ec2 web server run as cloud!
+
+## 🧹 Limpeza dos recursos
+Após concluir a atividade, delete os seguintes recursos para evitar cobranças:
+
+ - Instância EC2
+
+ - Security Group (se não reutilizável)
+
+ - Internet Gateway
+
+ - Tabela de rotas
+
+ - Sub-rede
+
+ - VPC
+
+---
+## ⚠️ Após a exclusão, revise o Painel de Faturamento da AWS e o AWS Cost Explorer para garantir que não há recursos ativos gerando custos.
+## 📢 Compartilhe seu progresso!
+### Marque a comunidade Run as Cloud no LinkedIn https://www.linkedin.com/company/run-as-cloud/?viewAsMember=true
+Também marque os organizadores Grupos de Estudos :
+
+Heberton Geovane https://www.linkedin.com/in/heberton-geovane/
+
+Maik Biazi https://www.linkedin.com/in/maik-biazi-47b9291a5/
+
+Michel Ernesto https://www.linkedin.com/in/mernesto/
+
+
+
 
